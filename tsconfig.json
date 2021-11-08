@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "ES6",
+        "outDir": "dist",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "skipLibCheck": true,
+        "lib": [ "ES6", "DOM", "es2017" ],
+        "types": [ "webpack-env" ],
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "emitDecoratorMetadata": false,
+    "files": [
+        "src/index.ts",
+    ],
+    "include": [
+        "*.ts"
+    ]
+}
