@@ -25,6 +25,7 @@ var ENTRY_POINT = './src/index.ts';
           <title>Aqua Web</title> 
           
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="module" src="aquaWeb.js"></script>
         <script>
           window.onload = () => { aquaWeb.Init(); }
           </script>
