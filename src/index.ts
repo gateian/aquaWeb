@@ -8,6 +8,7 @@ import { ImprovedNoise } from '../node_modules/three/examples/jsm/math/ImprovedN
 let container, stats;
 
 let camera, controls, scene, renderer;
+let waterRenderTex, reflectionCamera;
 
 let mesh, texture;
 
@@ -80,10 +81,15 @@ export function Init() {
 	container.addEventListener( 'pointermove', onPointerMove );
 
 
+	// create water reflection camera
+	waterRenderTex = new THREE.WebGLRenderTarget( 512, 512 );
+	reflectionCamera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 10, 20000 );
+	scene.add( mesh );
+
 	// Add water
 	const waterGeom = new THREE.PlaneGeometry( 7500, 7500, worldWidth - 1, worldDepth - 1 );
 	waterGeom.rotateX( -Math.PI / 2 );
-	mesh = new THREE.Mesh( waterGeom, new THREE.MeshBasicMaterial( { color: 0xA0D7F5 } ) );
+	mesh = new THREE.Mesh( waterGeom, new THREE.MeshBasicMaterial( { color: 0xA0D7F5, map: waterRenderTex.texture } ) );
 	mesh.position.y = 500;
 	scene.add( mesh );
 
@@ -213,6 +219,14 @@ function animate() {
 
 function render() {
 
+	reflectionCamera.position.copy( camera.position );
+	reflectionCamera.rotation.copy( camera.rotation );
+	//reflectionCamera.matrixWorldNeedsUpdate = true;
+
+	renderer.setRenderTarget( waterRenderTex );
+	renderer.render( scene, reflectionCamera );
+
+	renderer.setRenderTarget( null );
 	renderer.render( scene, camera );
 
 }
