@@ -1,0 +1,2 @@
+# Pull the httpd image from DockerHub repository to build our application as a base
+FROM httpd:2.4
