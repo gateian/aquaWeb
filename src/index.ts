@@ -79,6 +79,14 @@ export function Init() {
 
 	container.addEventListener( 'pointermove', onPointerMove );
 
+
+	// Add water
+	const waterGeom = new THREE.PlaneGeometry( 7500, 7500, worldWidth - 1, worldDepth - 1 );
+	waterGeom.rotateX( -Math.PI / 2 );
+	mesh = new THREE.Mesh( waterGeom, new THREE.MeshBasicMaterial( { color: 0xA0D7F5 } ) );
+	mesh.position.y = 500;
+	scene.add( mesh );
+
 	stats = new Stats();
 	container.appendChild( stats.dom );
 
@@ -100,8 +108,10 @@ function onWindowResize() {
 
 function generateHeight( width, height ) {
 
-	const size = width * height, data = new Uint8Array( size ),
-		perlin = new ImprovedNoise(), z = Math.random() * 100;
+	const size = width * height;
+	const data = new Uint8Array( size );
+	const perlin = new ImprovedNoise()
+	const z = Math.random() * 100;
 
 	let quality = 1;
 
