@@ -19,7 +19,8 @@ export class TerrainManager {
         const geometry = new THREE.PlaneGeometry( 7500, 7500, worldWidth - 1, worldDepth - 1 );
         geometry.rotateX( - Math.PI / 2 );
     
-        this.vertices = Array.from( geometry.attributes.position.array );
+        // @ts-ignore
+        this.vertices = geometry.attributes.position.array;
     
         for ( let i = 0, j = 0, l = this.vertices.length; i < l; i ++, j += 3 ) {
     
