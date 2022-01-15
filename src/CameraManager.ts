@@ -1,4 +1,5 @@
 import {
+    AquaWeb,
     THREE 
 } from './Internal';
 
@@ -26,6 +27,8 @@ export class CameraManager {
     }
 
     MirrorYPlane( target, source, offset ) {
+
+        AquaWeb.Debug?.AddPanelContent( "CameraOffset", "Camera Offset: " + offset );
 
         let mirrorCam = this.cameras.get( target );
         let sourceCam = this.cameras.get( source );

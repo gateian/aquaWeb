@@ -1,3 +1,4 @@
+/*
 const path = require('path');
 // const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -11,31 +12,9 @@ var ENTRY_POINT = './src/index.ts';
   entry: ENTRY_POINT,
   watch: true,
   mode: 'development',
-  watchOptions: {
-    // ignored: /node_modules/
-  },
   plugins: [
-    new HtmlWebpackPlugin({ 
-      title: 'Aqua Web', 
-      inject: false,
-      templateContent: `<!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Aqua Web</title> 
-          
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="module" src="aquaWeb.js"></script>
-        <script>
-          window.onload = () => { aquaWeb.Init(); }
-          </script>
-        </head>
-        <body style="background-color: rgba(255, 0, 0, 0)">
-          <div id="container"></div>
-        </body>
-      </html>` }),
     new MiniCssExtractPlugin(),
-    //new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/\.(js|css|html)$/]),
+    new HtmlWebpackPlugin()
   ],
   module: {
     rules: [
@@ -52,20 +31,13 @@ var ENTRY_POINT = './src/index.ts';
       {
         test: /\.s[ac]ss$/i,
         use: [
-          "style-loader",
-          // MiniCssExtractPlugin.loader,
-          {
-            loader: "css-loader",
-            options: {
-              url: false
-            }
-          },
-           {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
+
+          // Translates CSS into CommonJS
+          MiniCssExtractPlugin.loader,
+
+          "css-loader",
+          // Compiles Sass to CSS
+          "sass-loader",
         ],
       },
       {
@@ -89,12 +61,9 @@ var ENTRY_POINT = './src/index.ts';
       'firstPersonControls': 'three/examples/jsm/controls/FirstPersonControls.js'
     }
   },
-  optimization: {
-    minimize: false
-  },
   output: {
     filename: PACKAGE_NAME + '.js',
-    //path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist'),
     //publicPath: 'dist/',
     library: {
       name: PACKAGE_NAME,
@@ -105,3 +74,54 @@ var ENTRY_POINT = './src/index.ts';
 
 
 module.exports = [ clientConfig ];
+*/
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  entry: './src/index.ts',
+  mode: 'development',
+  watch: true,
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.tpl$/i,
+        type: "asset/source",
+        include: path.resolve(__dirname, 'templates')
+      },
+      {
+        test: /\.s[ac]ss$/i,
+          use: [
+
+            // Creates `style` nodes from JS strings
+            //{ loader: "style-loader", options: { injectType: "linkTag" } },
+            // Translates CSS into CommonJS
+            MiniCssExtractPlugin.loader,
+
+            "css-loader",
+            // Compiles Sass to CSS
+            "sass-loader",
+          ],
+        }
+    ],
+  },
+  plugins: [new MiniCssExtractPlugin(), new HtmlWebpackPlugin() ],
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'aquaWeb.js',
+    library: {
+      name: "aquaWeb",
+      type: 'umd',
+    },
+    path: path.resolve(__dirname, 'dist'),
+  },
+};

@@ -1,0 +1,41 @@
+/*!*********************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./css/debug.scss ***!
+  \*********************************************************************************************************/
+#DebugPanel {
+  background-color: rgba(0, 0, 0, 0.678);
+  color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+#DebugPanel .debugItem {
+  margin: 5px;
+}
+#DebugPanel #DebugMinMaxBtn {
+  pointer-events: all;
+  cursor: pointer;
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  color: white;
+  border: none;
+}
+#DebugPanel #DebugMinMaxBtn:hover {
+  background-color: #363636;
+}
+#DebugPanel #DebugMinMaxBtn::after {
+  content: "-";
+}
+#DebugPanel #DebugMinMaxBtn.minimised::before {
+  content: "+";
+}
+#DebugPanel #DebugMinMaxBtn.minimised::after {
+  content: none;
+}
+/*!**********************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./css/global.scss ***!
+  \**********************************************************************************************************/
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}

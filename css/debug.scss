@@ -1,0 +1,43 @@
+#DebugPanel {
+
+    background-color: rgba(0, 0, 0, 0.678);
+    color: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    .debugItem {
+        margin: 5px;
+    }
+
+    #DebugMinMaxBtn {
+        pointer-events: all;
+        cursor: pointer;
+        display: block;
+        width: 30px;
+        height: 30px;
+        background-color: transparent;
+        color: white;
+        border: none;
+
+        &:hover {
+            background-color: #363636;
+        }
+
+
+        &::after {
+            content: "-";
+        }
+
+        &.minimised {
+        
+            &::before {
+                content: "+";
+            }
+
+            &::after {
+                content: none;
+            }
+        }
+    }
+}

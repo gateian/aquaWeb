@@ -1,5 +1,5 @@
 import Stats from '../node_modules/three/examples/jsm/libs/stats.module.js';
-
+import "../css/global.scss";
 export class DOMManager {
     container: HTMLElement;
     stats: Stats;

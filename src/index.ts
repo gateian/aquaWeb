@@ -14,7 +14,6 @@ import {
 export function Init() {
 
 	AquaWeb.DOM = new DOMManager();
-	AquaWeb.Debug = new Debug();
 	AquaWeb.Render = new Rendering();
 	AquaWeb.Cameras = new CameraManager();
 	AquaWeb.Scenes = new SceneManager();
@@ -22,6 +21,10 @@ export function Init() {
 	AquaWeb.Input = new InputManager();
 	AquaWeb.Water = new WaterManager();
 
+	if ( AquaWeb.DOM.GetUrlParameter( "debug" ) ) {
+		AquaWeb.Debug = new Debug();
+		AquaWeb.Debug.InitDebugPanel();
+	}
 	animate();
 }
 

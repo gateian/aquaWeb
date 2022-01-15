@@ -1,5 +1,5 @@
 import { AquaWeb } from "./Internal";
-
+import "../css/debug.scss";
 export class Debug {
 
     debugLines: any[];
