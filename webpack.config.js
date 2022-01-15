@@ -82,6 +82,7 @@ var ENTRY_POINT = './src/index.ts';
     },
     ],
   },
+  
   resolve: {
     extensions: [ '.js', '.ts', '.html' ],
     alias: {
