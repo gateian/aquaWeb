@@ -22,9 +22,11 @@ export class Rendering {
         AquaWeb.Cameras.MirrorYPlane( Constants.REFLECTION_CAM_NAME, "main", 0 );
         //reflectionCamera.matrixWorldNeedsUpdate = true;
     
-        // this.renderer.setRenderTarget( AquaWeb.Water.waterRenderTex );
-        // this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.Get( Constants.REFLECTION_CAM_NAME ) );
+        AquaWeb.Water.mesh.visible = false;
+        this.renderer.setRenderTarget( AquaWeb.Water.waterRenderTex );
+        this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.Get( Constants.REFLECTION_CAM_NAME ) );
 
+        AquaWeb.Water.mesh.visible = true;
         this.renderer.setRenderTarget( null );
         this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.active );
     
