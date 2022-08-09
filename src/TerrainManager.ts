@@ -32,6 +32,7 @@ export class TerrainManager {
         this.texture.wrapT = THREE.ClampToEdgeWrapping;
     
         this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: this.texture } ) );
+        this.mesh.position.y = -500;
         AquaWeb.Scenes.Add( this.mesh );
 
         const geometryHelper = new THREE.ConeGeometry( 20, 100, 3 );

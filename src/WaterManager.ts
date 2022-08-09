@@ -10,7 +10,7 @@ import ShaderWaterFrag from "./shaders/water-frag.glsl";
 
 export class WaterManager {
     waterRenderTex: THREE.WebGLRenderTarget
-    mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+    mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>;
 
     constructor() {
 
@@ -18,11 +18,24 @@ export class WaterManager {
         this.waterRenderTex = new THREE.WebGLRenderTarget( 512, 512 );
         AquaWeb.Cameras.CreateCamera( "reflectionCamera", 60, window.innerWidth / window.innerHeight, 10, 20000 );
 
+        const material = new THREE.ShaderMaterial( {
+
+            uniforms: {
+        
+                time: { value: 1.0 },
+                resolution: { value: new THREE.Vector2() },
+                surfaceTex: new THREE.Uniform( this.waterRenderTex.texture )
+        
+            },
+            vertexShader: ShaderWaterVert,
+            fragmentShader: ShaderWaterFrag
+        } );
+
         // Add water
         const waterGeom = new THREE.PlaneGeometry( 7500, 7500, Constants.WORLD_WIDTH - 1, Constants.WORLD_DEPTH - 1 );
         waterGeom.rotateX( -Math.PI / 2 );
-        this.mesh = new THREE.Mesh( waterGeom, new THREE.MeshBasicMaterial( { color: 0xA0D7F5, map: this.waterRenderTex.texture } ) );
-        this.mesh.position.y = 500;
+        this.mesh = new THREE.Mesh( waterGeom, material );
+        this.mesh.position.y = 0;
         AquaWeb.Scenes.Add( this.mesh );
     }
 }
