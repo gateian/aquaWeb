@@ -5,6 +5,9 @@ import {
     THREE
 } from './Internal';
 
+import ShaderWaterVert from "./shaders/water-vert.glsl";
+import ShaderWaterFrag from "./shaders/water-frag.glsl";
+
 export class WaterManager {
     waterRenderTex: THREE.WebGLRenderTarget
     mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;

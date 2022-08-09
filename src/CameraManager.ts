@@ -11,7 +11,6 @@ export class CameraManager {
 
         this.cameras = new Map();
 	    this.active = this.CreateCamera( "main", 60, window.innerWidth / window.innerHeight, 10, 20000 );
-
     }
 
     CreateCamera( name : string, fov : number, aspectRatio : number, near : number, far : number ) {
@@ -28,25 +27,30 @@ export class CameraManager {
 
     MirrorYPlane( target, source, offset ) {
 
-
         let mirrorCam = this.cameras.get( target );
         let sourceCam = this.cameras.get( source );
-
 
         mirrorCam.position.copy( sourceCam.position );
         mirrorCam.position.setY( offset - ( sourceCam.position.y - offset ) );
         mirrorCam.rotation.copy( sourceCam.rotation );
-        // mirrorCam.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), 90 );
+        // mirrorCam.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), 90 );        
 
+        let sourceCamDir = new THREE.Vector3();
+        sourceCam.getWorldDirection(sourceCamDir);
+
+        let mirrorCamDir = new THREE.Vector3();
+        mirrorCam.getWorldDirection( mirrorCamDir );
+        mirrorCamDir.reflect( new THREE.Vector3( 0, 1, 0 ) );
         
+        let mirrorTarget = mirrorCam.position.clone();
+        mirrorTarget.add( mirrorCamDir );
+        mirrorCam.lookAt( mirrorTarget );
+
+        // mirrorCam.lookAt( )
 
         if ( AquaWeb.Debug ) {
 
-            let sourceCamDir = new THREE.Vector3();
-            sourceCam.getWorldDirection(sourceCamDir);
-
-            let mirrorCamDir = new THREE.Vector3();
-            mirrorCam.getWorldDirection( mirrorCamDir );
+            
 
             AquaWeb.Debug.AddPanelContent( "CameraPos", `Cam Pos: 
                 ${sourceCam.position.x.toFixed(1)},
@@ -60,9 +64,9 @@ export class CameraManager {
             );
 
             AquaWeb.Debug.AddPanelContent( "CameraDir", `Cam Dir:
-                ${sourceCamDir.x.toFixed(1)},
-                ${sourceCamDir.y.toFixed(1)},
-                ${sourceCamDir.z.toFixed(1)}
+                ${sourceCamDir.x.toFixed(3)},
+                ${sourceCamDir.y.toFixed(3)},
+                ${sourceCamDir.z.toFixed(3)}
             ` );
             AquaWeb.Debug.AddPanelContent( "ReflectionCameraPos", `Refl. Cam Pos: 
                 ${mirrorCam.position.x.toFixed(1)},
@@ -75,10 +79,10 @@ export class CameraManager {
                 ${( THREE.MathUtils.RAD2DEG * mirrorCam.rotation.z ).toFixed(1)}` 
             );
             AquaWeb.Debug.AddPanelContent( "ReflCameraDir", `Refl Cam Dir:
-            ${mirrorCamDir.x.toFixed(1)},
-            ${mirrorCamDir.y.toFixed(1)},
-            ${mirrorCamDir.z.toFixed(1)}
-        ` );
+                ${mirrorCamDir.x.toFixed(3)},
+                ${mirrorCamDir.y.toFixed(3)},
+                ${mirrorCamDir.z.toFixed(3)}
+            ` );
         }
 
     }

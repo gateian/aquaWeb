@@ -17,7 +17,6 @@ export class Rendering {
     }
 
     Render() {
-
         
         AquaWeb.Cameras.MirrorYPlane( Constants.REFLECTION_CAM_NAME, "main", 0 );
         //reflectionCamera.matrixWorldNeedsUpdate = true;
