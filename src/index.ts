@@ -16,6 +16,7 @@ export function Init() {
 	AquaWeb.DOM = new DOMManager();
 	AquaWeb.Render = new Rendering();
 	AquaWeb.Cameras = new CameraManager();
+	AquaWeb.Render.Init();
 	AquaWeb.Scenes = new SceneManager();
 	AquaWeb.Terrain = new TerrainManager();
 	AquaWeb.Input = new InputManager();
