@@ -8,9 +8,12 @@ const params = {
     type: THREE.UnsignedShortType
 };
 
+
+
 export class Rendering {
 
     depthTarget : THREE.WebGLRenderTarget;
+    waterTarget : THREE.WebGLRenderTarget;
     renderer : THREE.WebGLRenderer;
     postCamera: THREE.OrthographicCamera;
     postMaterial: THREE.ShaderMaterial;
@@ -18,7 +21,7 @@ export class Rendering {
 
     constructor() {
 
-        this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+        this.renderer = new THREE.WebGLRenderer( { antialias: true, logarithmicDepthBuffer: true } );
 	    this.renderer.setPixelRatio( window.devicePixelRatio );
 	    this.renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -27,6 +30,7 @@ export class Rendering {
 
     Init() {
         this.SetupDepthRenderTarget();
+        this.SetupWaterRenderTarget();
         this.SetupPost();
     }
 
@@ -41,7 +45,8 @@ export class Rendering {
                 cameraNear: { value: AquaWeb.Cameras.active.near },
                 cameraFar: { value: AquaWeb.Cameras.active.far },
                 tDiffuse: { value: null },
-                tDepth: { value: null }
+                tDepth: { value: null },
+                tWater: { value: null }
             }
         } );
         const postPlane = new THREE.PlaneGeometry( 2, 2 );
@@ -67,7 +72,14 @@ export class Rendering {
 
     }
 
+    SetupWaterRenderTarget() {
 
+        if ( this.waterTarget ) this.waterTarget.dispose();
+
+        this.waterTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight );
+        this.waterTarget.texture.minFilter = THREE.NearestFilter;
+        this.waterTarget.texture.magFilter = THREE.NearestFilter;
+    }
 
     Render() {
         
@@ -78,24 +90,36 @@ export class Rendering {
         var plane = new THREE.Plane( normal, constant );
         this.renderer.clippingPlanes = [plane];
 
-        AquaWeb.Water.mesh.visible = false;
+        // Render reflection camera
+        AquaWeb.Water.UpdateShader();
+        // AquaWeb.Water.mesh.visible = false;
+        AquaWeb.Cameras.waterReflection.layers.disable( Constants.LAYERS.Water );
+        AquaWeb.Cameras.active.layers.enable( Constants.LAYERS.Normal );
         this.renderer.setRenderTarget( AquaWeb.Water.waterRenderTex );
         this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.Get( Constants.REFLECTION_CAM_NAME ) );
 
-
         this.renderer.clippingPlanes = [];
         
-
-        AquaWeb.Water.mesh.visible = true;
+        // Render main scene
         this.renderer.setRenderTarget( this.depthTarget );
+        AquaWeb.Cameras.active.layers.disable( Constants.LAYERS.Water );
+        this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.active );
+
+        // Render water
+        // AquaWeb.Water.material.uniforms.depthTex = new THREE.Uniform( )
+        // this.renderer.setRenderTarget( this.waterTarget );
+        this.renderer.setRenderTarget( null );
+        AquaWeb.Cameras.active.layers.enable( Constants.LAYERS.Water );
+        AquaWeb.Cameras.active.layers.disable( Constants.LAYERS.Normal );
         this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.active );
 
         // render post FX
-        this.postMaterial.uniforms.tDiffuse.value = this.depthTarget.texture;
-        this.postMaterial.uniforms.tDepth.value = this.depthTarget.depthTexture;
+        // this.postMaterial.uniforms.tDiffuse.value = this.depthTarget.texture;
+        // this.postMaterial.uniforms.tWater.value = this.waterTarget.texture;
+        // this.postMaterial.uniforms.tDepth.value = this.depthTarget.depthTexture;
 
-        this.renderer.setRenderTarget( null );
-        this.renderer.render( this.postScene, this.postCamera );
+        // this.renderer.setRenderTarget( null );
+        // this.renderer.render( this.postScene, this.postCamera );
     
     }
 }

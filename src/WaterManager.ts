@@ -12,19 +12,28 @@ export class WaterManager {
     waterRenderTex: THREE.WebGLRenderTarget
     mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>;
 
+    material : THREE.ShaderMaterial;
+    scene : THREE.Scene;
+
     constructor() {
+
 
         // create water reflection camera
         this.waterRenderTex = new THREE.WebGLRenderTarget( 512, 512 );
-        AquaWeb.Cameras.CreateCamera( "reflectionCamera", 60, window.innerWidth / window.innerHeight, 10, 20000 );
+        var camera = AquaWeb.Cameras.CreateCamera( "reflectionCamera", 60, window.innerWidth / window.innerHeight, 10, 20000 );
+        camera.layers.set( 0 );
 
-        const material = new THREE.ShaderMaterial( {
+        this.material = new THREE.ShaderMaterial( {
 
             uniforms: {
         
-                time: { value: 1.0 },
-                resolution: { value: new THREE.Vector2() },
-                surfaceTex: new THREE.Uniform( this.waterRenderTex.texture )
+                time: new THREE.Uniform( 1.0 ),
+                resolution: new THREE.Uniform( new THREE.Vector2() ),
+                surfaceTex: new THREE.Uniform( this.waterRenderTex.texture ),
+                camPos: new THREE.Uniform( AquaWeb.Cameras.active.position ),
+                cameraNear: new THREE.Uniform( AquaWeb.Cameras.active.near ),
+                cameraFar: new THREE.Uniform( AquaWeb.Cameras.active.far ),
+                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.texture )
         
             },
             vertexShader: ShaderWaterVert,
@@ -34,8 +43,16 @@ export class WaterManager {
         // Add water
         const waterGeom = new THREE.PlaneGeometry( 7500, 7500, Constants.WORLD_WIDTH - 1, Constants.WORLD_DEPTH - 1 );
         waterGeom.rotateX( -Math.PI / 2 );
-        this.mesh = new THREE.Mesh( waterGeom, material );
+        this.mesh = new THREE.Mesh( waterGeom, this.material );
         this.mesh.position.y = 0;
+        this.mesh.layers.set( Constants.LAYERS.Water );
         AquaWeb.Scenes.Add( this.mesh );
+    }
+
+    UpdateShader() {
+
+        this.material.uniforms.camPos =  new  THREE.Uniform( AquaWeb.Cameras.active.position );
+        this.material.uniforms.cameraNear =  new  THREE.Uniform( AquaWeb.Cameras.active.near );
+        this.material.uniforms.cameraFar =  new  THREE.Uniform( AquaWeb.Cameras.active.far );
     }
 }

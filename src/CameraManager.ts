@@ -1,6 +1,7 @@
 import {
     AquaWeb,
-    THREE 
+    THREE,
+    Constants
 } from './Internal';
 
 export class CameraManager {
@@ -18,6 +19,11 @@ export class CameraManager {
         let camera = new THREE.PerspectiveCamera( fov, aspectRatio, near, far );
         this.cameras.set( name, camera );
         return camera;
+    }
+
+    get waterReflection() : THREE.Camera {
+
+        return this.cameras.get( Constants.REFLECTION_CAM_NAME );
     }
 
     Get( name : string ) {
