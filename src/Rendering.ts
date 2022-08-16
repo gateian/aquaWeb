@@ -106,7 +106,7 @@ export class Rendering {
         this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.active );
 
         // Render water
-        // AquaWeb.Water.material.uniforms.depthTex = new THREE.Uniform( )
+        AquaWeb.Water.material.uniforms.depthTex = new THREE.Uniform( this.depthTarget.depthTexture );
         // this.renderer.setRenderTarget( this.waterTarget );
         this.renderer.setRenderTarget( null );
         AquaWeb.Cameras.active.layers.enable( Constants.LAYERS.Water );

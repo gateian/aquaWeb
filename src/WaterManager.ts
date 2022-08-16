@@ -19,7 +19,7 @@ export class WaterManager {
 
 
         // create water reflection camera
-        this.waterRenderTex = new THREE.WebGLRenderTarget( 512, 512 );
+        this.waterRenderTex = new THREE.WebGLRenderTarget( 1024, 1024 );
         var camera = AquaWeb.Cameras.CreateCamera( "reflectionCamera", 60, window.innerWidth / window.innerHeight, 10, 20000 );
         camera.layers.set( 0 );
 
@@ -33,7 +33,8 @@ export class WaterManager {
                 camPos: new THREE.Uniform( AquaWeb.Cameras.active.position ),
                 cameraNear: new THREE.Uniform( AquaWeb.Cameras.active.near ),
                 cameraFar: new THREE.Uniform( AquaWeb.Cameras.active.far ),
-                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.texture )
+                diffuseTex: new THREE.Uniform( AquaWeb.Render.depthTarget.texture ),
+                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.depthTexture )
         
             },
             vertexShader: ShaderWaterVert,
