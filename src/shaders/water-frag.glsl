@@ -92,20 +92,29 @@ void main() {
 
     vCoords.y = 1.0 - vCoords.y;
 
-    vec3 dir = normalize( vWorldPos - camPos );
-    float angle = dot( -dir, vec3( 0.0, 1.0, 0.0 ) );
+    vec3 I = normalize( vWorldPos - camPos );
+    float angle = dot( -I, vec3( 0.0, 1.0, 0.0 ) );
+
+float _Bias = 0.0;
+    float _Power = 2.0;
+    float _Scale = 1.0;
+    vec3 normWorld = vec3( 0.0, 1.0, 0.0 );
+	  float R = _Bias + _Scale * pow(1.0 + dot(I, normWorld), _Power);
 
     vec4 ref = texture2D( surfaceTex, vCoords );
-    ref = mix ( ref, vec4( 0.0 ), angle );
+    // ref = mix ( ref, vec4( 0.0 ), R );
+    float waterDepth = ( viewZ - ( distToCamera / cameraFar ) ) * 50.0;
 
     gl_FragColor *= 1.1;
+    gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( 0. ), clamp( waterDepth, 0.0, 1.0 ) );
 
-    float waterDepth = ( viewZ - ( distToCamera / cameraFar ) ) * 50.0;
 
     // waterDepth = viewZToOrthographicDepth( distToCamera, cameraNear, cameraFar ); 
     // waterDepth = distToCamera / cameraFar;
     
-    gl_FragColor.rgb = mix( gl_FragColor.rgb, ref.rgb, clamp( waterDepth, 0.0, 1.0 ) );
+
+    gl_FragColor.rgb = mix( gl_FragColor.rgb, ref.rgb, R );
+    // gl_FragColor.rgb = vec3( R );
     gl_FragColor.a = 1.0;
 
 

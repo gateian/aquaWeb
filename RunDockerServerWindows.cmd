@@ -1,0 +1,1 @@
+run -p 80:80 -v %cd%\dist\:/usr/local/apache2/htdocs/ --name aquaweb-1 httpd
