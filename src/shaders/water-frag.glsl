@@ -77,21 +77,17 @@ void main() {
 
     #endif
 
-    // float fragZ = distance( camPos, vWorldPos );
-
-    // float viewZ = perspectiveDepthToViewZ( fragZ, cameraNear, cameraFar );
-    // float depth = viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
-
+    // Working out screen coords
   	vec2 vCoords = vPos.xy;
 	vCoords /= vPos.w;
 	vCoords = vCoords * 0.5 + 0.5;
 
-    float viewZ = readLogDepth2( depthTex, vCoords );// * 100.0;
-    //viewZ = step( 0.0, viewZToOrthographicDepth( viewZ, cameraNear, cameraFar ) );
+    // getting depth from depth texture
+    float viewZ = readLogDepth2( depthTex, vCoords );
     gl_FragColor = texture2D( diffuseTex, vCoords ) * 0.6;
 
-    vCoords.y = 1.0 - vCoords.y;
-
+    
+    // working out a reflection angle
     vec3 I = normalize( vWorldPos - camPos );
     float angle = dot( -I, vec3( 0.0, 1.0, 0.0 ) );
 
@@ -101,6 +97,8 @@ float _Bias = 0.0;
     vec3 normWorld = vec3( 0.0, 1.0, 0.0 );
 	  float R = _Bias + _Scale * pow(1.0 + dot(I, normWorld), _Power);
 
+    // flipping screen coords for reflection buffer
+    vCoords.y = 1.0 - vCoords.y;
     vec4 ref = texture2D( surfaceTex, vCoords );
     // ref = mix ( ref, vec4( 0.0 ), R );
     float waterDepth = ( viewZ - ( distToCamera / cameraFar ) ) * 50.0;
@@ -108,18 +106,8 @@ float _Bias = 0.0;
     gl_FragColor *= 1.1;
     gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( 0. ), clamp( waterDepth, 0.0, 1.0 ) );
 
-
-    // waterDepth = viewZToOrthographicDepth( distToCamera, cameraNear, cameraFar ); 
-    // waterDepth = distToCamera / cameraFar;
     
-
     gl_FragColor.rgb = mix( gl_FragColor.rgb, ref.rgb, R );
     // gl_FragColor.rgb = vec3( R );
     gl_FragColor.a = 1.0;
-
-
-
-
-
-    // gl_FragColor.rgb = vec3(  );
 }
