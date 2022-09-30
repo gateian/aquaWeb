@@ -122,4 +122,14 @@ export class Rendering {
         // this.renderer.render( this.postScene, this.postCamera );
     
     }
+
+    SetReflectionPower( value : number ) {
+
+        AquaWeb.Water.material.uniforms.reflPower = new THREE.Uniform( value );
+    }
+
+    SetReflectionScale( value : number ) {
+
+        AquaWeb.Water.material.uniforms.reflScale = new THREE.Uniform( value );
+    }
 }

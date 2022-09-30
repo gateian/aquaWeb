@@ -26,6 +26,7 @@ export function Init() {
 		AquaWeb.Debug = new Debug();
 		AquaWeb.Debug.InitDebugPanel();
 	}
+	AquaWeb.DOM.Init();
 	animate();
 }
 

@@ -34,8 +34,9 @@ export class WaterManager {
                 cameraNear: new THREE.Uniform( AquaWeb.Cameras.active.near ),
                 cameraFar: new THREE.Uniform( AquaWeb.Cameras.active.far ),
                 diffuseTex: new THREE.Uniform( AquaWeb.Render.depthTarget.texture ),
-                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.depthTexture )
-        
+                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.depthTexture ),
+                reflPower: new THREE.Uniform( 2.0 ),
+                reflScale: new THREE.Uniform( 1.0 )
             },
             vertexShader: ShaderWaterVert,
             fragmentShader: ShaderWaterFrag

@@ -1,14 +1,60 @@
 import Stats from '../node_modules/three/examples/jsm/libs/stats.module.js';
 import "../css/global.scss";
+import { AquaWeb } from './Internal';
 export class DOMManager {
     container: HTMLElement;
     stats: Stats;
+    reflectionPowerInput: HTMLInputElement;
+    reflectionScaleInput: HTMLInputElement;
 
     constructor() {
 
         this.container = document.getElementById( 'container' );
         this.stats = new Stats();
 	    this.container.appendChild( this.stats.dom );
+
+        
+
+    }
+
+    Init() {
+
+        this.reflectionPowerInput = <HTMLInputElement>document.getElementById( 'paramReflPower' );
+        this.reflectionPowerInput.value = "2.0";
+
+        const reflPower = localStorage.getItem( 'reflectionPower' );
+
+        if ( reflPower ) {
+
+            this.reflectionPowerInput.value = reflPower;
+            AquaWeb.Render.SetReflectionPower( parseFloat( reflPower ) );
+        }
+
+        this.reflectionPowerInput.addEventListener( "change", ( e ) => {
+
+           AquaWeb.Render.SetReflectionPower( parseFloat( ( <HTMLInputElement>e.target ).value ) );
+           localStorage.setItem( 'reflectionPower', ( <HTMLInputElement>e.target ).value )
+           
+        });
+
+
+        this.reflectionScaleInput = <HTMLInputElement>document.getElementById( 'paramReflScale' );
+        this.reflectionScaleInput.value = "1.0";
+
+        const reflScale = localStorage.getItem( 'reflectionScale' );
+
+        if ( reflScale ) {
+
+            this.reflectionScaleInput.value = reflScale;
+            AquaWeb.Render.SetReflectionScale( parseFloat( reflScale ) );
+        }
+
+        this.reflectionScaleInput.addEventListener( "change", ( e ) => {
+
+           AquaWeb.Render.SetReflectionScale( parseFloat( ( <HTMLInputElement>e.target ).value ) );
+           localStorage.setItem( 'reflectionScale', ( <HTMLInputElement>e.target ).value )
+           
+        });
     }
 
     Page404() {
