@@ -132,4 +132,9 @@ export class Rendering {
 
         AquaWeb.Water.material.uniforms.reflScale = new THREE.Uniform( value );
     }
+
+    SetExtinctionCoefficient( value : number ) {
+
+        AquaWeb.Water.material.uniforms.extinctionCoeff = new THREE.Uniform( value );
+    }
 }

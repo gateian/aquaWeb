@@ -6,6 +6,7 @@ export class DOMManager {
     stats: Stats;
     reflectionPowerInput: HTMLInputElement;
     reflectionScaleInput: HTMLInputElement;
+    extinctionCoeffInput: HTMLInputElement;
 
     constructor() {
 
@@ -19,6 +20,7 @@ export class DOMManager {
 
     Init() {
 
+        // Reflection Power
         this.reflectionPowerInput = <HTMLInputElement>document.getElementById( 'paramReflPower' );
         this.reflectionPowerInput.value = "2.0";
 
@@ -38,6 +40,7 @@ export class DOMManager {
         });
 
 
+        // Reflection scale
         this.reflectionScaleInput = <HTMLInputElement>document.getElementById( 'paramReflScale' );
         this.reflectionScaleInput.value = "1.0";
 
@@ -55,7 +58,29 @@ export class DOMManager {
            localStorage.setItem( 'reflectionScale', ( <HTMLInputElement>e.target ).value )
            
         });
+
+
+        // Extinction Coefficient
+        
+        this.extinctionCoeffInput = <HTMLInputElement>document.getElementById( 'paramExtinctionCoeff' );
+        this.extinctionCoeffInput.value = "1.0";
+
+        const extinctionCoeff = localStorage.getItem( 'extinctionCoeff' );
+
+        if ( extinctionCoeff ) {
+
+            this.extinctionCoeffInput.value = extinctionCoeff;
+            AquaWeb.Render.SetExtinctionCoefficient( parseFloat( extinctionCoeff ) );
+        }
+
+        this.extinctionCoeffInput.addEventListener( "change", ( e ) => {
+
+           AquaWeb.Render.SetExtinctionCoefficient( parseFloat( ( <HTMLInputElement>e.target ).value ) );
+           localStorage.setItem( 'extinctionCoeff', ( <HTMLInputElement>e.target ).value )
+           
+        });
     }
+
 
     Page404() {
 
