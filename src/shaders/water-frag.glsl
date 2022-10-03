@@ -87,6 +87,8 @@ void main() {
 
     // getting depth from depth texture
     float viewZ = readLogDepth2( depthTex, vCoords );
+    vec2 refractCoords = vCoords;
+    
     gl_FragColor = texture2D( diffuseTex, vCoords );// * 0.6;
 
     
@@ -100,7 +102,7 @@ void main() {
     // flipping screen coords for reflection buffer
     vCoords.y = 1.0 - vCoords.y;
     vec4 ref = texture2D( surfaceTex, vCoords );
-    float waterDepth = 1.0 / pow( viewZ - ( distToCamera / cameraFar ), extinctionCoeff ) * 2.0;
+    float waterDepth = 1.0 / pow( viewZ - ( distToCamera / cameraFar ), extinctionCoeff ) * 4.0;
 
     gl_FragColor *= 1.1;
     gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( 0.11,0.23,0.28 ), clamp( waterDepth, 0.0, 1.0 ) );
