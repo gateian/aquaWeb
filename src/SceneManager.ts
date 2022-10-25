@@ -11,7 +11,7 @@ export class SceneManager {
         this.main = new THREE.Scene();
     	this.main.background = new THREE.Color( 0xbfd1e5 );
 
-        const geometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
+        const geometry = new THREE.BoxGeometry( 100, 100, 100 );
         const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
         const cube = new THREE.Mesh( geometry, material );
         this.Add( cube );

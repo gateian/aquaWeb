@@ -16,8 +16,9 @@ varying vec4 vPos;
 uniform sampler2D surfaceTex;
 uniform sampler2D diffuseTex;
 uniform sampler2D depthTex;
+uniform mat4 projMatrix;
 varying vec3 vWorldPos;
-varying float distToCamera;
+varying float vDepth;
 uniform vec3 camPos;
 uniform float frustumDepth;
 uniform float cameraNear;
@@ -25,6 +26,8 @@ uniform float cameraFar;
 uniform float reflPower;
 uniform float reflScale;
 uniform float extinctionCoeff;
+uniform float waterDistance;
+uniform float refracIndex;
 
 float readDepth( sampler2D depthSampler, vec2 coord ) {
     float fragCoordZ = texture2D( depthSampler, coord ).x;
@@ -89,25 +92,49 @@ void main() {
     float viewZ = readLogDepth2( depthTex, vCoords );
     vec2 refractCoords = vCoords;
     
-    gl_FragColor = texture2D( diffuseTex, vCoords );// * 0.6;
 
-    
-    // working out a reflection angle
+    // calculate the incidence vector
     vec3 I = normalize( vWorldPos - camPos );
+    vec3 normWorld = vec3( 0.0, 1.0, 0.0 );
+
+    vec3 rfracVec = refract( I, normWorld, 1. / refracIndex );
     float angle = dot( -I, vec3( 0.0, 1.0, 0.0 ) );
 
-    vec3 normWorld = vec3( 0.0, 1.0, 0.0 );
 	float R = reflScale * pow(1.0 + dot(I, normWorld), reflPower );
 
     // flipping screen coords for reflection buffer
     vCoords.y = 1.0 - vCoords.y;
     vec4 ref = texture2D( surfaceTex, vCoords );
-    float waterDepth = 1.0 / pow( viewZ - ( distToCamera / cameraFar ), extinctionCoeff ) * 4.0;
+    float groundDepth = cameraFar * viewZ;
+    vec3 groundPoint = vWorldPos + ( rfracVec * ( groundDepth - vDepth ) );
+    float dist = dot( vec3( 0., 1., 0. ), vWorldPos - groundPoint  );
+    vec3 projPoint = groundPoint - ( dist * normWorld );
+    float waterDepth = 1.0 / pow( viewZ - ( vDepth / cameraFar ), extinctionCoeff ) * 4.0;
+
+vec4 clipSpacePos = projMatrix * (viewMatrix * vec4( vWorldPos, 1.0));
+vec4 clipSpacePos2 = projMatrix * (viewMatrix * vec4( projPoint, 1.0));
+vec3 ndcSpacePos = clipSpacePos.xyz / clipSpacePos.w;
+vec3 ndcSpacePos2 = clipSpacePos2.xyz / clipSpacePos2.w;
 
     gl_FragColor *= 1.1;
     gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( 0.11,0.23,0.28 ), clamp( waterDepth, 0.0, 1.0 ) );
-
     
     gl_FragColor.rgb = mix( gl_FragColor.rgb, ref.rgb, R );
     gl_FragColor.a = 1.0;
+
+    float vStep =  step( waterDistance, groundDepth - vDepth );
+    float gStep = step( groundDepth, waterDistance );
+    // gl_FragColor.rgb = vec3( 0., 0., gStep );
+    // dist = groundDepth - vDepth;
+    // gl_FragColor.rgb = vec3( dist / waterDistance );
+    vec2 sCoord1 = ( ndcSpacePos2.xy + 1. ) * .5;
+    float sCoord2 = ( ndcSpacePos2.x + 1. ) * .5;
+    // gl_FragColor.rgb = vec3( abs( sCoord1 - sCoord2 ) );
+
+    //gl_FragColor = texture2D( diffuseTex, sCoord1 );// * 0.6;
+
+
+    // if ( dist == 0. ) {
+    //   gl_FragColor.rgb = vec3( 1., 0., 0. );
+    // }
 }

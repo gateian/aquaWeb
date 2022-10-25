@@ -7,7 +7,12 @@ import {
 export class CameraManager {
     active : THREE.PerspectiveCamera;
     cameras: Map<string, THREE.PerspectiveCamera>;
+    
+    get distanceToOrigin() {
 
+        return new THREE.Vector3().distanceTo( this.active.position );
+    }
+    
     constructor() {
 
         this.cameras = new Map();

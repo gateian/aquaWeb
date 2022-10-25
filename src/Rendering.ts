@@ -85,20 +85,23 @@ export class Rendering {
         
         AquaWeb.Cameras.MirrorYPlane( Constants.REFLECTION_CAM_NAME, "main", 0 );
         //reflectionCamera.matrixWorldNeedsUpdate = true;
-        var normal = new THREE.Vector3( 0, 1, 0 );
-        var constant = 0;
-        var plane = new THREE.Plane( normal, constant );
-        this.renderer.clippingPlanes = [plane];
+        // var normal = new THREE.Vector3( 0, 1, 0 );
+        // var constant = 0;
+        // var plane = new THREE.Plane( normal, constant );
+        // this.renderer.clippingPlanes = [plane];
 
         // Render reflection camera
         AquaWeb.Water.UpdateShader();
         // AquaWeb.Water.mesh.visible = false;
+        AquaWeb.Terrain.ClipUnderWater( true );
         AquaWeb.Cameras.waterReflection.layers.disable( Constants.LAYERS.Water );
         AquaWeb.Cameras.active.layers.enable( Constants.LAYERS.Normal );
         this.renderer.setRenderTarget( AquaWeb.Water.waterRenderTex );
         this.renderer.render( AquaWeb.Scenes.main, AquaWeb.Cameras.Get( Constants.REFLECTION_CAM_NAME ) );
 
-        this.renderer.clippingPlanes = [];
+        // this.renderer.clippingPlanes = [];
+        AquaWeb.Terrain.ClipUnderWater( false );
+
         
         // Render main scene
         this.renderer.setRenderTarget( this.depthTarget );
@@ -136,5 +139,16 @@ export class Rendering {
     SetExtinctionCoefficient( value : number ) {
 
         AquaWeb.Water.material.uniforms.extinctionCoeff = new THREE.Uniform( value );
+    }
+
+    SetShaderWaterDistance( value : number ) {
+
+        AquaWeb.Water.material.uniforms.waterDistance = new THREE.Uniform( value );
+        AquaWeb.Terrain.material.uniforms.refractionStrength = new THREE.Uniform( value );
+    }
+
+    SetRefractionIndex( value : number ) {
+
+        AquaWeb.Water.material.uniforms.refracIndex = new THREE.Uniform( value );
     }
 }

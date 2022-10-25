@@ -4,81 +4,96 @@ import { AquaWeb } from './Internal';
 export class DOMManager {
     container: HTMLElement;
     stats: Stats;
+    debugParams: Map<string,{"input":HTMLInputElement, "variable":any}>;
     reflectionPowerInput: HTMLInputElement;
     reflectionScaleInput: HTMLInputElement;
     extinctionCoeffInput: HTMLInputElement;
+    shaderDistanceInput: HTMLInputElement;
+    paramBox: HTMLElement;
+    cameraDistanceInput: HTMLInputElement;
+    refractionIndicesInput: HTMLInputElement;
 
     constructor() {
 
         this.container = document.getElementById( 'container' );
         this.stats = new Stats();
 	    this.container.appendChild( this.stats.dom );
+        this.paramBox = document.getElementById( 'paramBox' );
 
-        
-
+        this.debugParams = new Map<string, {"input":HTMLInputElement, "variable":any}>();
     }
 
     Init() {
 
         // Reflection Power
-        this.reflectionPowerInput = <HTMLInputElement>document.getElementById( 'paramReflPower' );
-        this.reflectionPowerInput.value = "2.0";
-
-        const reflPower = localStorage.getItem( 'reflectionPower' );
-
-        if ( reflPower ) {
-
-            this.reflectionPowerInput.value = reflPower;
-            AquaWeb.Render.SetReflectionPower( parseFloat( reflPower ) );
-        }
-
-        this.reflectionPowerInput.addEventListener( "change", ( e ) => {
-
-           AquaWeb.Render.SetReflectionPower( parseFloat( ( <HTMLInputElement>e.target ).value ) );
-           localStorage.setItem( 'reflectionPower', ( <HTMLInputElement>e.target ).value )
-           
-        });
-
+        this.reflectionPowerInput = this.InitParameterInput( 'paramReflPower', "Fresnel Power", "1.5", AquaWeb.Render.SetReflectionPower );
 
         // Reflection scale
-        this.reflectionScaleInput = <HTMLInputElement>document.getElementById( 'paramReflScale' );
-        this.reflectionScaleInput.value = "1.0";
-
-        const reflScale = localStorage.getItem( 'reflectionScale' );
-
-        if ( reflScale ) {
-
-            this.reflectionScaleInput.value = reflScale;
-            AquaWeb.Render.SetReflectionScale( parseFloat( reflScale ) );
-        }
-
-        this.reflectionScaleInput.addEventListener( "change", ( e ) => {
-
-           AquaWeb.Render.SetReflectionScale( parseFloat( ( <HTMLInputElement>e.target ).value ) );
-           localStorage.setItem( 'reflectionScale', ( <HTMLInputElement>e.target ).value )
-           
-        });
-
+        this.reflectionScaleInput = this.InitParameterInput( 'paramReflScale', "Fresnel Scale", "1.1", AquaWeb.Render.SetReflectionScale );
 
         // Extinction Coefficient
-        
-        this.extinctionCoeffInput = <HTMLInputElement>document.getElementById( 'paramExtinctionCoeff' );
-        this.extinctionCoeffInput.value = "1.0";
+        this.extinctionCoeffInput = this.InitParameterInput( 'paramExtinctionCoeff', "Extinction Coeff", "-0.35", AquaWeb.Render.SetExtinctionCoefficient );
 
-        const extinctionCoeff = localStorage.getItem( 'extinctionCoeff' );
+        // Shader Water Distance
+        this.shaderDistanceInput = this.InitParameterInput( 'paramShaderDist', "Water Distance", "1.0", AquaWeb.Render.SetShaderWaterDistance )
 
-        if ( extinctionCoeff ) {
+        // Refraction Indices
+        this.refractionIndicesInput = this.InitParameterInput( 'paramRefractionIndices', "Refraction Indices", "1.333", AquaWeb.Render.SetRefractionIndex );
+        // Camera Distance
+        this.cameraDistanceInput = this.InitDebugParam( 'paramCameraDistance', "Camera Distance", () => { return AquaWeb.Cameras.distanceToOrigin } );
+    }
 
-            this.extinctionCoeffInput.value = extinctionCoeff;
-            AquaWeb.Render.SetExtinctionCoefficient( parseFloat( extinctionCoeff ) );
+    InitParameterInput( id : string, name : string, defaultVal? : string, updateFunc? : Function ) {
+
+        const inputEl = document.createElement( 'input' );
+        inputEl.type = "text";
+        inputEl.id = id;
+        inputEl.value = defaultVal;
+        inputEl.disabled = defaultVal == undefined;
+
+        const label = document.createElement( 'label' );
+        label.htmlFor = id;
+        label.innerText = name;
+
+        this.paramBox.append( label, inputEl );
+
+        const param = localStorage.getItem( id );
+
+        if ( param ) {
+
+            inputEl.value = param;
+            updateFunc( parseFloat( param ) );
         }
 
-        this.extinctionCoeffInput.addEventListener( "change", ( e ) => {
+        inputEl.addEventListener( "change", ( e ) => {
 
-           AquaWeb.Render.SetExtinctionCoefficient( parseFloat( ( <HTMLInputElement>e.target ).value ) );
-           localStorage.setItem( 'extinctionCoeff', ( <HTMLInputElement>e.target ).value )
+            updateFunc( parseFloat( ( <HTMLInputElement>e.target).value ) );
+           localStorage.setItem( id, ( <HTMLInputElement>e.target ).value )
            
         });
+
+        return inputEl;
+    }
+
+    InitDebugParam( id : string, name : string, updateValue : any ) {
+
+        const inputEl = document.createElement( 'input' );
+        inputEl.type = "text";
+        inputEl.id = id;
+        inputEl.readOnly = true;
+
+        const label = document.createElement( 'label' );
+        label.htmlFor = id;
+        label.innerText = name;
+
+        this.paramBox.append( label, inputEl );
+
+        this.debugParams.set( id, {
+            input: inputEl,
+            variable: updateValue
+        });
+
+        return inputEl;
     }
 
 
@@ -174,5 +189,15 @@ export class DOMManager {
         }
 
         return button;
+    }
+
+    Update() {
+
+        this.stats.update();
+
+        for ( const [ id, param] of this.debugParams ) {
+            
+            param.input.value = param.variable();    
+        }
     }
 }

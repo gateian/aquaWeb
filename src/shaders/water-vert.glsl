@@ -12,7 +12,7 @@
 
 varying vec4 vPos;
 varying vec3 vWorldPos;
-varying float distToCamera;
+varying float vDepth;
 
 #define EPSILON 1e-6
 
@@ -20,9 +20,10 @@ void main() {
 
     vec4 csPos = modelViewMatrix * vec4( position, 1.0 );
     vPos = projectionMatrix * csPos;
-    distToCamera = -csPos.z;
+    vDepth = -csPos.z;
     vWorldPos = (modelMatrix * vec4( position, 1.0 )).xyz;
     gl_Position = vPos;
+
 
     #ifdef USE_LOGDEPTHBUF
 

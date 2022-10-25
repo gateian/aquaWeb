@@ -1,6 +1,8 @@
 import { ImprovedNoise } from '../node_modules/three/examples/jsm/math/ImprovedNoise.js';
 import { AquaWeb, THREE } from './Internal';
 
+import terrainShaderVert from "./shaders/terrain-vert.glsl";
+import terrainShaderFrag from "./shaders/terrain-frag.glsl";
 
 const worldWidth = 256, worldDepth = 256,
 	worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
@@ -11,6 +13,7 @@ export class TerrainManager {
     vertices : number[];
     mesh: THREE.Mesh;
     helperMesh: THREE.Mesh;
+    material: THREE.ShaderMaterial;
 
     constructor() {
 
@@ -31,7 +34,24 @@ export class TerrainManager {
         this.texture.wrapS = THREE.ClampToEdgeWrapping;
         this.texture.wrapT = THREE.ClampToEdgeWrapping;
     
-        this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: this.texture } ) );
+        this.material = new THREE.ShaderMaterial( {
+
+            uniforms: {
+        
+                camPos: new THREE.Uniform( AquaWeb.Cameras.active.position ),
+                cameraNear: new THREE.Uniform( AquaWeb.Cameras.active.near ),
+                cameraFar: new THREE.Uniform( AquaWeb.Cameras.active.far ),
+                map: new THREE.Uniform( this.texture ),
+                clipUnderwater: new THREE.Uniform( false ),
+                refractionStrength: new THREE.Uniform( 1.0 )
+            },
+            vertexShader: terrainShaderVert,
+            fragmentShader: terrainShaderFrag
+        } );
+
+        const material2 = new THREE.MeshBasicMaterial( { map: this.texture } );
+
+        this.mesh = new THREE.Mesh( geometry, this.material );
         this.mesh.position.y = -500;
         AquaWeb.Scenes.Add( this.mesh );
 
@@ -40,7 +60,12 @@ export class TerrainManager {
         geometryHelper.rotateX( Math.PI / 2 );
         this.helperMesh = new THREE.Mesh( geometryHelper, new THREE.MeshNormalMaterial() );
         AquaWeb.Scenes.Add( this.helperMesh );
-    }    
+    }   
+    
+    ClipUnderWater( clip : boolean ) {
+
+        this.material.uniforms.clipUnderwater.value = clip;
+    }
 
     GenerateHeight( width, height ) {
 

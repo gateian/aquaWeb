@@ -35,7 +35,7 @@ function animate() {
 	requestAnimationFrame( animate );
 	
 	AquaWeb.Render.Render();
-	AquaWeb.DOM.stats.update();
+	AquaWeb.DOM.Update();
 }
 
 
