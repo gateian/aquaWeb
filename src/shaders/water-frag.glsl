@@ -105,6 +105,7 @@ void main() {
     // flipping screen coords for reflection buffer
     vCoords.y = 1.0 - vCoords.y;
     vec4 ref = texture2D( surfaceTex, vCoords );
+    gl_FragColor = texture2D( diffuseTex, vec2( vCoords.x, 1. - vCoords.y ) );
     float groundDepth = cameraFar * viewZ;
     vec3 groundPoint = vWorldPos + ( rfracVec * ( groundDepth - vDepth ) );
     float dist = dot( vec3( 0., 1., 0. ), vWorldPos - groundPoint  );
@@ -116,7 +117,7 @@ vec4 clipSpacePos2 = projMatrix * (viewMatrix * vec4( projPoint, 1.0));
 vec3 ndcSpacePos = clipSpacePos.xyz / clipSpacePos.w;
 vec3 ndcSpacePos2 = clipSpacePos2.xyz / clipSpacePos2.w;
 
-    gl_FragColor *= 1.1;
+    gl_FragColor.rgb *= 1.5;
     gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( 0.11,0.23,0.28 ), clamp( waterDepth, 0.0, 1.0 ) );
     
     gl_FragColor.rgb = mix( gl_FragColor.rgb, ref.rgb, R );

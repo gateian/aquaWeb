@@ -27,9 +27,9 @@ void main() {
     vec4 waterNormal = viewMatrix * vec4( 0., 1., 0., 1. );
     vec4 I = viewMatrix * vec4( vWorldPos - cameraPosition, 1. );
 
-    vec3 R = refract( normalize( vWorldPos - cameraPosition ), vec3( 0.0, 1.0, 0.0 ), 1.0 / 1.33 );
+    vec3 R = refract( normalize( vWorldPos - cameraPosition ), vec3( 0.0, 1.0, 0.0 ), 1. / 1.33 );
     // pos.xy -= R.xy * _RefractionStrength * step(wPos.y, 0.0) * abs(wPos.y);
-    vWorldPos = mix( vWorldPos, vWorldPos - ( R * refractionStrength ), vec3( vWorldPos.y < 0. ) );
+    vWorldPos = mix( vWorldPos, vWorldPos - ( R * refractionStrength ), step( vWorldPos.y, 0. ) );
 
     vec4 mvPosition = viewMatrix * vec4( vWorldPos, 1.);
     vClipPosition = - mvPosition.xyz;
