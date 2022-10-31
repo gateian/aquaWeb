@@ -30,5 +30,6 @@ void main() {
     #endif
 
     gl_FragColor = texture2D( map, vUv );
+    // gl_FragColor.rgb *= 1.0 - clamp(  abs( vWorldPos.y ), 0.0, 1.0 );
     gl_FragColor.a = 1.;
 }
