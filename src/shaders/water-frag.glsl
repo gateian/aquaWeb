@@ -117,7 +117,7 @@ vec4 clipSpacePos2 = projMatrix * (viewMatrix * vec4( projPoint, 1.0));
 vec3 ndcSpacePos = clipSpacePos.xyz / clipSpacePos.w;
 vec3 ndcSpacePos2 = clipSpacePos2.xyz / clipSpacePos2.w;
 
-    gl_FragColor.rgb *= 1.5;
+    gl_FragColor.rgb *= 1.1;
     gl_FragColor.rgb = mix( gl_FragColor.rgb, vec3( 0.11,0.23,0.28 ), clamp( waterDepth, 0.0, 1.0 ) );
     
     gl_FragColor.rgb = mix( gl_FragColor.rgb, ref.rgb, R );

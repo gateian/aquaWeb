@@ -47,7 +47,7 @@ export class WaterManager {
         } );
 
         // Add water
-        const waterGeom = new THREE.PlaneGeometry( 7500, 7500, Constants.WORLD_WIDTH - 1, Constants.WORLD_DEPTH - 1 );
+        const waterGeom = new THREE.PlaneGeometry( 75000, 75000, Constants.WORLD_WIDTH - 1, Constants.WORLD_DEPTH - 1 );
         waterGeom.rotateX( -Math.PI / 2 );
         this.mesh = new THREE.Mesh( waterGeom, this.material );
         this.mesh.position.y = 0;
