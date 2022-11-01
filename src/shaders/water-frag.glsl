@@ -13,6 +13,7 @@
 #include <packing>
 
 varying vec4 vPos;
+varying vec3 vNormal;
 uniform sampler2D surfaceTex;
 uniform sampler2D diffuseTex;
 uniform sampler2D depthTex;
@@ -97,10 +98,10 @@ void main() {
     vec3 I = normalize( vWorldPos - camPos );
     vec3 normWorld = vec3( 0.0, 1.0, 0.0 );
 
-    vec3 rfracVec = refract( I, normWorld, 1. / refracIndex );
+    vec3 rfracVec = refract( I, vNormal, 1. / refracIndex );
     float angle = dot( -I, vec3( 0.0, 1.0, 0.0 ) );
 
-	float R = reflScale * pow(1.0 + dot(I, normWorld), reflPower );
+	float R = reflScale * pow(1.0 + dot(I, vNormal), reflPower );
 
     // flipping screen coords for reflection buffer
     vCoords.y = 1.0 - vCoords.y;
@@ -109,7 +110,7 @@ void main() {
     float groundDepth = cameraFar * viewZ;
     vec3 groundPoint = vWorldPos + ( rfracVec * ( groundDepth - vDepth ) );
     float dist = dot( vec3( 0., 1., 0. ), vWorldPos - groundPoint  );
-    vec3 projPoint = groundPoint - ( dist * normWorld );
+    vec3 projPoint = groundPoint - ( dist * vNormal );
     float waterDepth = 1.0 / pow( viewZ - ( vDepth / cameraFar ), extinctionCoeff ) * 4.0;
 
 vec4 clipSpacePos = projMatrix * (viewMatrix * vec4( vWorldPos, 1.0));

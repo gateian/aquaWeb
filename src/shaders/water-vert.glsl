@@ -13,13 +13,19 @@
 varying vec4 vPos;
 varying vec3 vWorldPos;
 varying float vDepth;
+varying vec3 vNormal;
 
 #define EPSILON 1e-6
 
 void main() {
 
-    vec4 csPos = modelViewMatrix * vec4( position, 1.0 );
-    vPos = projectionMatrix * csPos;
+    vec4 csPos = vec4( position, 1.0 );
+	csPos.y = sin( csPos.x ) * 10.0;
+
+	vec3 tangent = normalize( vec3( 1.0, cos( csPos.x ), 0.0 ) );
+	vNormal = vec3( -tangent.y, tangent.x, 0.0 );
+
+    vPos = projectionMatrix * modelViewMatrix * csPos;
     vDepth = -csPos.z;
     vWorldPos = (modelMatrix * vec4( position, 1.0 )).xyz;
     gl_Position = vPos;

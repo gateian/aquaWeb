@@ -43,7 +43,8 @@ export class WaterManager {
                 projMatrix: new THREE.Uniform( AquaWeb.Cameras.active.projectionMatrix )
             },
             vertexShader: ShaderWaterVert,
-            fragmentShader: ShaderWaterFrag
+            fragmentShader: ShaderWaterFrag,
+            wireframe: false
         } );
 
         // Add water
