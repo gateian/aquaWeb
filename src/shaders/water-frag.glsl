@@ -30,6 +30,10 @@ uniform float extinctionCoeff;
 uniform float waterDistance;
 uniform float refracIndex;
 
+#define FRESNEL_POWER 1.5
+#define FRESNEL_SCALE 1.1
+#define EXTINC_COEFF -0.36
+
 float readDepth( sampler2D depthSampler, vec2 coord ) {
     float fragCoordZ = texture2D( depthSampler, coord ).x;
     float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
@@ -98,10 +102,10 @@ void main() {
     vec3 I = normalize( vWorldPos - camPos );
     vec3 normWorld = vec3( 0.0, 1.0, 0.0 );
 
-    vec3 rfracVec = refract( I, vNormal, 1. / refracIndex );
+    vec3 rfracVec = refract( I, normWorld, 1. / refracIndex );
     float angle = dot( -I, vec3( 0.0, 1.0, 0.0 ) );
 
-	float R = reflScale * pow(1.0 + dot(I, vNormal), reflPower );
+	float R = FRESNEL_SCALE * pow(1.0 + dot(I, normWorld ), FRESNEL_POWER );
 
     // flipping screen coords for reflection buffer
     vCoords.y = 1.0 - vCoords.y;
@@ -111,7 +115,7 @@ void main() {
     vec3 groundPoint = vWorldPos + ( rfracVec * ( groundDepth - vDepth ) );
     float dist = dot( vec3( 0., 1., 0. ), vWorldPos - groundPoint  );
     vec3 projPoint = groundPoint - ( dist * vNormal );
-    float waterDepth = 1.0 / pow( viewZ - ( vDepth / cameraFar ), extinctionCoeff ) * 4.0;
+    float waterDepth = 1.0 / pow( viewZ - ( vDepth / cameraFar ), EXTINC_COEFF ) * 4.0;
 
 vec4 clipSpacePos = projMatrix * (viewMatrix * vec4( vWorldPos, 1.0));
 vec4 clipSpacePos2 = projMatrix * (viewMatrix * vec4( projPoint, 1.0));
@@ -133,7 +137,7 @@ vec3 ndcSpacePos2 = clipSpacePos2.xyz / clipSpacePos2.w;
     float sCoord2 = ( ndcSpacePos2.x + 1. ) * .5;
     // gl_FragColor.rgb = vec3( abs( sCoord1 - sCoord2 ) );
 
-    //gl_FragColor = texture2D( diffuseTex, sCoord1 );// * 0.6;
+    gl_FragColor.rgb = vNormal;
 
 
     // if ( dist == 0. ) {

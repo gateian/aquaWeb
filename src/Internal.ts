@@ -16,6 +16,9 @@ export class AquaWeb {
     static Scenes : SceneManager;
     static Terrain : TerrainManager;
     static Water : WaterManager;
+	static Clock: THREE.Clock;
+	static Delta: number;
+	static Time: number;
 }
 
 

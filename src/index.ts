@@ -1,5 +1,6 @@
 import { 
 	AquaWeb,
+	THREE,
 	Debug,
 	CameraManager,
 	Rendering,
@@ -13,6 +14,9 @@ import {
 
 export function Init() {
 
+	AquaWeb.Clock = new THREE.Clock();
+	AquaWeb.Delta = AquaWeb.Clock.getDelta();
+	AquaWeb.Time = 0.0;
 	AquaWeb.DOM = new DOMManager();
 	AquaWeb.Cameras = new CameraManager();
 	AquaWeb.Render = new Rendering();
@@ -33,6 +37,8 @@ export function Init() {
 function animate() {
 
 	requestAnimationFrame( animate );
+	AquaWeb.Delta = AquaWeb.Clock.getDelta();
+	AquaWeb.Time += AquaWeb.Delta;
 	
 	AquaWeb.Render.Render();
 	AquaWeb.DOM.Update();

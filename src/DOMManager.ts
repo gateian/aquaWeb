@@ -5,13 +5,15 @@ export class DOMManager {
     container: HTMLElement;
     stats: Stats;
     debugParams: Map<string,{"input":HTMLInputElement, "variable":any}>;
-    reflectionPowerInput: HTMLInputElement;
-    reflectionScaleInput: HTMLInputElement;
-    extinctionCoeffInput: HTMLInputElement;
+
     shaderDistanceInput: HTMLInputElement;
     paramBox: HTMLElement;
     cameraDistanceInput: HTMLInputElement;
     refractionIndicesInput: HTMLInputElement;
+    shaderWaveAmplitude: HTMLInputElement;
+    shaderWavelength: HTMLInputElement;
+    shaderWaveSpeed: HTMLInputElement;
+    timerInput: HTMLInputElement;
 
     constructor() {
 
@@ -25,14 +27,9 @@ export class DOMManager {
 
     Init() {
 
-        // Reflection Power
-        this.reflectionPowerInput = this.InitParameterInput( 'paramReflPower', "Fresnel Power", "1.5", AquaWeb.Render.SetReflectionPower );
-
-        // Reflection scale
-        this.reflectionScaleInput = this.InitParameterInput( 'paramReflScale', "Fresnel Scale", "1.1", AquaWeb.Render.SetReflectionScale );
-
-        // Extinction Coefficient
-        this.extinctionCoeffInput = this.InitParameterInput( 'paramExtinctionCoeff', "Extinction Coeff", "-0.35", AquaWeb.Render.SetExtinctionCoefficient );
+        this.shaderWaveAmplitude = this.InitParameterInput( 'paramWaveAmplitude', "Wave Amplitude", "10.0", AquaWeb.Render.SetShaderWaveAmplitude );
+        this.shaderWavelength = this.InitParameterInput( 'paramWavelength', "Wave Length", "1.0", AquaWeb.Render.SetShaderWavelength );
+        this.shaderWaveSpeed = this.InitParameterInput( 'paramWaveSpeed', "Wave Speed", "1.0", AquaWeb.Render.SetShaderWaveSpeed );
 
         // Shader Water Distance
         this.shaderDistanceInput = this.InitParameterInput( 'paramShaderDist', "Water Distance", "1.0", AquaWeb.Render.SetShaderWaterDistance )
@@ -41,6 +38,7 @@ export class DOMManager {
         this.refractionIndicesInput = this.InitParameterInput( 'paramRefractionIndices', "Refraction Indices", "1.333", AquaWeb.Render.SetRefractionIndex );
         // Camera Distance
         this.cameraDistanceInput = this.InitDebugParam( 'paramCameraDistance', "Camera Distance", () => { return AquaWeb.Cameras.distanceToOrigin } );
+        this.timerInput = this.InitDebugParam( 'paramTimer', "Time", () => { return AquaWeb.Time } );
     }
 
     InitParameterInput( id : string, name : string, defaultVal? : string, updateFunc? : Function ) {

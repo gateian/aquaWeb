@@ -126,19 +126,19 @@ export class Rendering {
     
     }
 
-    SetReflectionPower( value : number ) {
+    SetShaderWaveAmplitude( value : number ) {
 
-        AquaWeb.Water.material.uniforms.reflPower = new THREE.Uniform( value );
+        AquaWeb.Water.material.uniforms._Amplitude = new THREE.Uniform( value );
     }
 
-    SetReflectionScale( value : number ) {
+    SetShaderWavelength( value : number ) {
 
-        AquaWeb.Water.material.uniforms.reflScale = new THREE.Uniform( value );
+        AquaWeb.Water.material.uniforms._Wavelength = new THREE.Uniform( value );
     }
 
-    SetExtinctionCoefficient( value : number ) {
+    SetShaderWaveSpeed( value : number ) {
 
-        AquaWeb.Water.material.uniforms.extinctionCoeff = new THREE.Uniform( value );
+        AquaWeb.Water.material.uniforms._Speed = new THREE.Uniform( value );
     }
 
     SetShaderWaterDistance( value : number ) {

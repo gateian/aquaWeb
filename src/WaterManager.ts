@@ -17,7 +17,6 @@ export class WaterManager {
 
     constructor() {
 
-
         // create water reflection camera
         this.waterRenderTex = new THREE.WebGLRenderTarget( 1024, 1024 );
         var camera = AquaWeb.Cameras.CreateCamera( "reflectionCamera", 60, window.innerWidth / window.innerHeight, 10, 20000 );
@@ -27,17 +26,17 @@ export class WaterManager {
 
             uniforms: {
         
-                time: new THREE.Uniform( 1.0 ),
+                _Time: new THREE.Uniform( 0.0 ),
                 resolution: new THREE.Uniform( new THREE.Vector2() ),
                 surfaceTex: new THREE.Uniform( this.waterRenderTex.texture ),
                 camPos: new THREE.Uniform( AquaWeb.Cameras.active.position ),
                 cameraNear: new THREE.Uniform( AquaWeb.Cameras.active.near ),
                 cameraFar: new THREE.Uniform( AquaWeb.Cameras.active.far ),
                 diffuseTex: new THREE.Uniform( AquaWeb.Render.depthTarget.texture ),
-                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.depthTexture ),
-                reflPower: new THREE.Uniform( 2.0 ),
-                reflScale: new THREE.Uniform( 1.0 ),
-                extinctionCoeff: new THREE.Uniform( 1.0 ),
+                depthTex: new THREE.Uniform( AquaWeb.Render.depthTarget.depthTexture ),                
+                _Amplitude: new THREE.Uniform( 10.0 ),
+                _Speed: new THREE.Uniform( 1.0 ),
+                _Wavelength: new THREE.Uniform( 1.0 ),
                 waterDistance: new THREE.Uniform( 1.0 ),
                 refracIndex: new THREE.Uniform( 1.333 ),
                 projMatrix: new THREE.Uniform( AquaWeb.Cameras.active.projectionMatrix )
@@ -58,6 +57,7 @@ export class WaterManager {
 
     UpdateShader() {
 
+        this.material.uniforms._Time = new THREE.Uniform( AquaWeb.Time );
         this.material.uniforms.camPos =  new  THREE.Uniform( AquaWeb.Cameras.active.position );
         this.material.uniforms.cameraNear =  new  THREE.Uniform( AquaWeb.Cameras.active.near );
         this.material.uniforms.cameraFar =  new  THREE.Uniform( AquaWeb.Cameras.active.far );
